@@ -1,0 +1,68 @@
+---
+title: "Block Hash Count"
+summary:
+  "How the blockHashCount runtime constant sets the number of recent block-number-to-hash mappings,
+  2400, that the chain keeps in storage before pruning the oldest."
+category: "Core Concepts"
+tags: ["Blockchain"]
+infoboxTitle: Block Hash Count
+infoboxCaption: Runtime constant limiting how many recent block-hash mappings the chain keeps.
+infoboxRows:
+  - label: Constant
+    value: blockHashCount
+  - label: Pallet
+    value: system
+  - label: Value
+    value: "2400"
+  - label: Pruning
+    value: Oldest mapping pruned first
+---
+
+# Block Hash Count
+
+Block hash count is a system pallet runtime constant, listed in the chain's constants metadata as
+blockHashCount, with the value 2400 and the summary "Maximum number of block number to block hash
+mappings to keep (oldest pruned first)"
+([Subtensor API Constants: blockHashCount](https://docs.learnbittensor.org/subtensor-api/constants#blockhashcount-u32)).
+The runtime sets this bound directly: it configures the system pallet's block hash retention to 2400
+blocks
+([runtime/src/lib.rs](https://github.com/opentensor/subtensor/blob/14bc6f9f964b9cc362e9635dd110a487fa5d15a0/runtime/src/lib.rs#L259)).
+
+## What It Means
+
+Every block carries a unique identifier called a block hash, and the official glossary states that a
+single block is processed every 12 seconds
+([Bittensor Glossary: Block](https://docs.learnbittensor.org/resources/glossary#block)). The chain
+keeps an on-chain mapping from recent block numbers to their block hashes. blockHashCount caps that
+mapping at the most recent 2400 blocks, and the oldest mapping is pruned first once the cap is
+reached
+([Subtensor API Constants: blockHashCount](https://docs.learnbittensor.org/subtensor-api/constants#blockhashcount-u32)).
+At the documented 12-second block rate, 2400 blocks corresponds to about eight hours of recent block
+hashes.
+
+The value applies uniformly across the chain; it is not a per-subnet or configurable-per-account
+setting.
+
+## Distinction from Block Length
+
+blockHashCount and blockLength are both system pallet constants, but they bound different things.
+blockHashCount caps how many recent block-number-to-hash mappings the chain keeps in storage.
+blockLength caps the maximum length of a single block, in bytes
+([Subtensor API Constants: blockHashCount](https://docs.learnbittensor.org/subtensor-api/constants#blockhashcount-u32),
+[Subtensor API Constants: blockLength](https://docs.learnbittensor.org/subtensor-api/constants#blocklength-maxframesupportdispatchperdispatchclassu32)).
+
+- **blockHashCount**: 2400; bounds how many recent block-hash mappings are retained.
+- **blockLength**: bounds the byte length of one block.
+
+## Reader Boundary
+
+This page defines the constant and its value. It does not report which block hashes are currently
+retained or identify the current chain height; that is live chain state
+([Subtensor API Constants: blockHashCount](https://docs.learnbittensor.org/subtensor-api/constants#blockhashcount-u32)).
+
+## Further Reading
+
+- [Subtensor API Constants: blockHashCount](https://docs.learnbittensor.org/subtensor-api/constants#blockhashcount-u32)
+- [Subtensor API Constants: blockLength](https://docs.learnbittensor.org/subtensor-api/constants#blocklength-maxframesupportdispatchperdispatchclassu32)
+- [Bittensor Glossary: Block](https://docs.learnbittensor.org/resources/glossary#block)
+- [Subtensor runtime: system pallet config](https://github.com/opentensor/subtensor/blob/14bc6f9f964b9cc362e9635dd110a487fa5d15a0/runtime/src/lib.rs#L259)
